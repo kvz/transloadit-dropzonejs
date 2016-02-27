@@ -27,6 +27,8 @@ All you need to do is fill in your public key and template_id where it reads:
 
 ```
 // configure below
+var key = '{your_public_key}';
+var template_id = '{your_template_id}';
 ```
 
 ## How does it work?
