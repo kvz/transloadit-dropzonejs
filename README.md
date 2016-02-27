@@ -45,4 +45,6 @@ Yeah, that was also easier than I had thought... ;)
 
 If we would leave it at this, we would only receive a status update once the upload has finished. We would never hear from our beloved robots again, and have no way of knowing the status of the transcoding-process (assembly). Just dead silence.
 
-In order to know how our robots are churning along, we need to actively check the status of our assembly. To do so, we keep sending requests to the assembly url (which was sent to us after the upload finished), until we receive the status "ASSEMBLY_COMPLETED". The returned json array contains all the info we need (filename, url, etc.). This is done in the checkStatus(assembly_url); function.
+In order to know how our robots are getting along, we need to actively check the status of our assembly. To do so, we simply keep sending requests to the assembly url (which was sent to us after the upload finished) every so often, until we receive the status "ASSEMBLY_COMPLETED". The returned json array contains all the info we need (filename, url, etc.). This is done in the checkStatus(assembly_url); function.
+
+With this data, we can then end the upload and present the images our robots lovingly crafted for us.
