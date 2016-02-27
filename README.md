@@ -19,7 +19,7 @@ Nothing revolutionary, but it gets a lot nicer once you start combining differen
 
 ## Dropzonejs
 
-While the Transloadit.com website features a plethora of examples on how to integrate Transloadit into your projects using javascript/jQuery, php or ruby, I was wondering if it would be possible to integrate Transloadit's backend with the Dropzonejs upload interface. I'm sharing the code here, so you can use and improve it :) If you have any improvements or suggestions, send me a pull request!
+While the Transloadit.com website features a plethora of examples on how to integrate Transloadit into your projects using javascript/jQuery, php or ruby, I was wondering if it would be possible to integrate Transloadit's backend with the Dropzonejs upload interface. Because javascript is not my native language, I'm sharing the code here, so you can use and improve it :) If you have any improvements or suggestions, send me a pull request!
 
 ## How to use it?
 
@@ -28,3 +28,21 @@ All you need to do is fill in your public key and template_id where it reads:
 ```
 // configure below
 ```
+
+## How does it work?
+
+To adapt Dropzonejs to work with Transloadit, all you need to do is append Transloadit's config array to the form on submit:
+
+```
+ sending: function(file, xhr, formData) {
+      formData.append('params', params); // params contains our transloadit config
+ }
+```
+
+Yeah, that was also easier than I had thought... ;)
+
+## Getting the assembly status
+
+If we would leave it at this, we would only receive a status update once the upload has finished. We would never hear from our beloved robots again, and have no way of knowing the status of the transcoding-process (assembly). Just dead silence.
+
+In order to know how our robots are churning along, we need to actively check the status of our assembly. To do so, we keep sending requests to the assembly url (which was sent to us after the upload finished), until we receive the status "ASSEMBLY_COMPLETED". The returned json array contains all the info we need (filename, url, etc.). This is done in the checkStatus(assembly_url); function.
