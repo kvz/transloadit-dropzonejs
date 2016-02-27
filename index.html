@@ -1,0 +1,125 @@
+<!doctype html>
+<html>
+
+<head>
+    <meta charset="UTF-8">
+    <title>Transloadit - Dropzonejs example</title>
+
+    <link rel="stylesheet" href="assets/css/dropzone.css">
+    <link rel="stylesheet" href="assets/css/style.css">
+    <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/font-awesome/4.5.0/css/font-awesome.min.css">
+
+</head>
+
+<body>
+
+    <div class="wrapper">
+        <div id="dZUpload" class="dropzone">
+            <div class="alert" onclick="$('#dZUpload').click();">Drop files here to upload.</div>
+            <div class="dz-default dz-message"></div>
+        </div>
+
+        <div id="result"></div>
+
+    </div>
+    
+    <script src="//ajax.googleapis.com/ajax/libs/jquery/2.1.3/jquery.min.js"></script>
+    <script src="assets/js/dropzone.js"></script>
+
+    <script>
+	
+		// configure below
+		var key = '{your_auth_key}';
+		var template_id = '{your_template_id}';
+		// end configure
+	
+        var params = '{"auth": {"key": "'+key+'"}, "template_id": "'+template_id+'", "steps": {"thumb": {"robot": "/image/resize", "use": "filetype", "width": 200,"height": 200, "resize_strategy": "crop"}}}';
+
+        $(document).ready(function() {
+            Dropzone.autoDiscover = false;
+            $("#dZUpload").dropzone({
+                url: "http://api2.transloadit.com/assemblies",
+                parallelUploads: 10,
+                uploadMultiple: true,
+                success: function(file, response) {
+
+                    file.previewElement.classList.add("dz-success");
+                    var jsonData = JSON.parse(response);
+                    window.assembly_url = jsonData.assembly_url; // save the assemblyurl for queuecomplete
+
+                    $('.alert').html('<i class="fa fa-cog fa-spin"></i> &nbsp; Uploading done. Processing...');
+
+                },
+                queuecomplete: function(file) {
+
+                    // when all files have finished uploading we start checking the status
+                    setTimeout(function() {
+                        checkStatus(window.assembly_url);
+                    }, 1000);
+
+                },
+                error: function(file, response) {
+                    file.previewElement.classList.add("dz-error");
+                },
+                sending: function(file, xhr, formData) {
+                    formData.append('params', params);
+
+                }
+            });
+        });
+		
+		/* after the upload to transloadit has finished, we have to actively request the status of the assembly */
+		/* to check the status, we keep sending requests to the assembly url (which was sent to us during upload), until we receive the status "ASSEMBLY_COMPLETED". */
+
+        function checkStatus(assembly_url) {
+            $.ajax({
+                url: assembly_url,
+                type: "GET",
+                dataType: "json",
+                success: function(data, textStatus) {
+                    if (data.ok && data.ok == "ASSEMBLY_COMPLETED") {
+						
+                        // console.log(JSON.stringify(data, null, "    "));
+						
+						// 'thumb' is the name of the step, rename if you use another name
+						for (var i = 0; i < data.results.thumb.length; i++) {
+                            var file = data.results.thumb[i];
+
+                            $('#result').append('<img src="' + file.url + '" width="100" />');
+
+                        }
+
+                        $('.dz-preview').fadeOut('slow', function() {
+
+                            $('.alert').html('Drop files here to upload.');
+                            $('#result img').fadeIn('slow');
+
+                        });
+
+                        return;
+                    }
+
+                    if (data.ok == "ASSEMBLY_EXECUTING") {
+
+                        // not finished, check again
+                        setTimeout(function() {
+                            checkStatus(assembly_url);
+                        }, 1000);
+
+                    }
+
+                    if (data.error || (data.ok != "ASSEMBLY_EXECUTING" && data.ok != "ASSEMBLY_UPLOADING")) {
+                        console.log('error');
+                        return;
+                    }
+
+                }
+
+            });
+
+        }
+    </script>
+
+</body>
+
+</html>

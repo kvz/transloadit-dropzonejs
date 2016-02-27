@@ -1,0 +1,38 @@
+body{
+	font-family: Helvetica, sans-serif;	
+	line-height: 22px;
+	font-size: 16px;
+}
+
+.dropzone{
+	border: 5px dashed #CCC;	
+	min-height: 0 !important;
+}
+
+.wrapper{
+	width: 660px;
+	margin: 0 auto;
+	margin-top: 50px;	
+}
+
+.alert{
+	cursor: pointer !important;
+	margin-bottom: 0;
+	color: #CCC;
+	font-weight: bold;
+	text-align: center;
+}
+
+#result{
+	margin-top: 20px;	
+}
+
+#result img{
+	margin-top: 10px;
+	margin-right: 10px;	
+	display: none;
+}
+
+.dz-message{
+	margin: 0 !important;	
+}
