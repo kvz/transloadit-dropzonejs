@@ -1,6 +1,9 @@
 # transloadit-dropzonejs
 Example integration of transloadit.com with dropzonejs.com
 
+## Demo
+http://zolder.zomp.nl/demo/transloadit-dropzonejs/
+
 ## Transloadit.com
 
 Transloadit.com is a wonderful tool that takes the complexities and safety wories out of handling user-submitted images and files. It allows you to specify a set of rules in json format, and then let transloadit's "robots" do all the heavy lifting for you. For example, to upload and create a square thumbnail you would give the resize robot the following instruction:
